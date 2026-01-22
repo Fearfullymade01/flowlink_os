@@ -98,3 +98,58 @@ class Graph(BaseModel):
         verbose_name = 'Knowledge Graph'
         verbose_name_plural = 'Knowledge Graphs'
         ordering = ['-created_at']
+
+
+class SmartCollection(BaseModel):
+    """Auto-generated collection of related items based on clustering."""
+    COLLECTION_CATEGORIES = [
+        ('project', 'Project'),
+        ('topic', 'Topic'),
+        ('timeline', 'Timeline'),
+        ('theme', 'Theme'),
+        ('custom', 'Custom'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='smart_collections')
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    category = models.CharField(max_length=50, choices=COLLECTION_CATEGORIES, default='custom')
+    confidence_score = models.FloatField(default=0.0)  # 0-1 confidence in this clustering
+    item_count = models.IntegerField(default=0)
+    
+    # Clustering metadata
+    cluster_id = models.IntegerField(null=True, blank=True)  # ID from clustering algorithm
+    algorithm = models.CharField(
+        max_length=50,
+        choices=[('kmeans', 'K-Means'), ('hdbscan', 'HDBSCAN'), ('hierarchical', 'Hierarchical')],
+        default='kmeans'
+    )
+    last_updated = models.DateTimeField(auto_now=True)
+    
+    # User customization
+    is_custom = models.BooleanField(default=False)  # User-created vs auto-generated
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"{self.name} ({self.get_category_display()})"
+    
+    class Meta:
+        verbose_name = 'Smart Collection'
+        verbose_name_plural = 'Smart Collections'
+        ordering = ['-confidence_score', '-created_at']
+        unique_together = ('user', 'name')
+
+
+class ClusterItem(BaseModel):
+    """Maps items to their smart collections."""
+    collection = models.ForeignKey(SmartCollection, on_delete=models.CASCADE, related_name='items')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='clusters')
+    relationship_strength = models.FloatField(default=1.0)  # 0-1 strength of connection to cluster
+    
+    def __str__(self):
+        return f"{self.item.title} -> {self.collection.name}"
+    
+    class Meta:
+        verbose_name = 'Cluster Item'
+        verbose_name_plural = 'Cluster Items'
+        unique_together = ('collection', 'item')

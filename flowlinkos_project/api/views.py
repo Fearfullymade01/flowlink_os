@@ -5,10 +5,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Item, Query, Summary
+from .serializers import ItemSerializer, QuerySerializer, SummarySerializer
 
 
 class ItemViewSet(viewsets.ModelViewSet):
     """ViewSet for managing items."""
+    serializer_class = ItemSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['item_type', 'is_archived', 'priority']
@@ -32,6 +34,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 
 class QueryViewSet(viewsets.ModelViewSet):
     """ViewSet for managing queries."""
+    serializer_class = QuerySerializer
     permission_classes = [IsAuthenticated]
     ordering_fields = ['created_at', 'confidence_score']
     ordering = ['-created_at']
@@ -68,6 +71,7 @@ class QueryViewSet(viewsets.ModelViewSet):
 
 class SummaryViewSet(viewsets.ModelViewSet):
     """ViewSet for managing summaries."""
+    serializer_class = SummarySerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['summary_type']
