@@ -46,9 +46,9 @@ Note: Heroku injects `DATABASE_URL` and `REDIS_URL` automatically for Postgres/R
 We use three processes defined in `Procfile` (repo root):
 
 ```
-web: gunicorn flowlinkos.wsgi --log-file -
-worker: celery -A flowlinkos worker -l info
-beat: celery -A flowlinkos beat -l info
+web: gunicorn --chdir flowlinkos_project flowlinkos.wsgi --log-file -
+worker: sh -c "cd flowlinkos_project && celery -A flowlinkos worker -l info"
+beat: sh -c "cd flowlinkos_project && celery -A flowlinkos beat -l info"
 ```
 
 Scale them as needed:
@@ -61,8 +61,8 @@ heroku ps:scale web=1 worker=1 beat=1 -a flowlinkos-app
 
 ```bash
 git push heroku main
-heroku run python manage.py migrate -a flowlinkos-app
-heroku run python manage.py collectstatic --noinput -a flowlinkos-app
+heroku run python flowlinkos_project/manage.py migrate -a flowlinkos-app
+heroku run python flowlinkos_project/manage.py collectstatic --noinput -a flowlinkos-app
 ```
 
 ## 5) Verify
