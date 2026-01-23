@@ -160,6 +160,10 @@ CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS',
 CORS_ALLOW_CREDENTIALS = True
 
 # Logging Configuration
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = LOG_DIR / 'flowlinkos.log'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -180,7 +184,7 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'flowlinkos.log',
+            'filename': LOG_FILE,
             'maxBytes': 1024 * 1024 * 10,  # 10MB
             'backupCount': 5,
             'formatter': 'verbose',
