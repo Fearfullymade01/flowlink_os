@@ -4,8 +4,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from knowledge_graph.query_engine import QueryRouter
 from .models import Item, Query, Summary
 from .serializers import ItemSerializer, QuerySerializer, SummarySerializer
+
+
+query_router = QueryRouter()
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -52,21 +56,28 @@ class QueryViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Create query object
+        result = query_router.execute(request.user, query_text)
+
         query = Query.objects.create(
             user=request.user,
             query_text=query_text,
-            results=[],
-            confidence_score=0.75
+            query_embedding=None,
+            results=result.get('results', []),
+            confidence_score=result.get('confidence', 0.0),
+            execution_time=0.0,
         )
-        
-        return Response({
-            'id': query.id,
-            'query_text': query.query_text,
-            'results': query.results,
-            'confidence_score': query.confidence_score,
-            'message': 'Query executed successfully'
-        })
+
+        payload = {
+            'query_id': query.id,
+            'intent': result.get('intent'),
+            'intent_confidence': result.get('intent_confidence'),
+            'confidence': result.get('confidence'),
+            'answer': result.get('answer'),
+            'results': result.get('results'),
+            'fallback': result.get('fallback'),
+            'timeframe': result.get('timeframe'),
+        }
+        return Response(payload)
 
 
 class SummaryViewSet(viewsets.ModelViewSet):

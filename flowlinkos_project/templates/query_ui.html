@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>FlowLinkOS Q&A</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #0f172a;
+                --panel: #111827;
+                --panel-2: #0b1220;
+                --text: #e5e7eb;
+                --muted: #9ca3af;
+                --accent: #f59e0b;
+                --accent-2: #10b981;
+                --border: #1f2937;
+                --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: "Space Grotesk", "Segoe UI", sans-serif;
+                background:
+                    radial-gradient(
+                        circle at 20% 20%,
+                        rgba(245, 158, 11, 0.08),
+                        transparent 30%
+                    ),
+                    radial-gradient(
+                        circle at 80% 0%,
+                        rgba(16, 185, 129, 0.08),
+                        transparent 25%
+                    ),
+                    linear-gradient(135deg, #0b1220, #0f172a 60%, #0b1220);
+                color: var(--text);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 32px;
+            }
+            .shell {
+                width: 100%;
+                max-width: 980px;
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                box-shadow: var(--shadow);
+                padding: 32px;
+            }
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                gap: 16px;
+            }
+            .title {
+                font-size: 1.4rem;
+                font-weight: 600;
+                letter-spacing: -0.01em;
+            }
+            .pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                background: rgba(16, 185, 129, 0.12);
+                color: #a7f3d0;
+                font-weight: 600;
+                border: 1px solid rgba(16, 185, 129, 0.35);
+                font-size: 0.9rem;
+            }
+            form {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 18px;
+            }
+            input[type="text"] {
+                flex: 1;
+                padding: 14px 16px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                background: var(--panel-2);
+                color: var(--text);
+                font-size: 1rem;
+            }
+            input[type="text"]:focus {
+                outline: 2px solid rgba(245, 158, 11, 0.35);
+                border-color: rgba(245, 158, 11, 0.45);
+            }
+            button {
+                padding: 14px 18px;
+                border-radius: 12px;
+                border: none;
+                background: linear-gradient(135deg, #f59e0b, #f97316);
+                color: #111827;
+                font-weight: 700;
+                cursor: pointer;
+                min-width: 110px;
+                box-shadow: 0 10px 25px rgba(245, 158, 11, 0.25);
+            }
+            button:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+            .muted {
+                color: var(--muted);
+                font-size: 0.95rem;
+            }
+            .panel {
+                background: var(--panel-2);
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                padding: 18px;
+                margin-top: 12px;
+            }
+            .label-row {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-bottom: 10px;
+            }
+            .chip {
+                padding: 6px 10px;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+            .chip.intent {
+                background: rgba(245, 158, 11, 0.14);
+                color: #fcd34d;
+                border: 1px solid rgba(245, 158, 11, 0.3);
+            }
+            .chip.conf {
+                background: rgba(16, 185, 129, 0.12);
+                color: #6ee7b7;
+                border: 1px solid rgba(16, 185, 129, 0.35);
+            }
+            .chip.fallback {
+                background: rgba(239, 68, 68, 0.1);
+                color: #fca5a5;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+            }
+            .answer {
+                font-size: 1.05rem;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+            .timeframe {
+                color: #c7d2fe;
+                font-weight: 600;
+            }
+            .sources {
+                margin-top: 12px;
+                display: grid;
+                gap: 10px;
+            }
+            .source-card {
+                padding: 12px;
+                border-radius: 10px;
+                border: 1px solid var(--border);
+                background: rgba(255, 255, 255, 0.02);
+            }
+            .source-title {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            .source-meta {
+                color: var(--muted);
+                font-size: 0.9rem;
+            }
+            .score {
+                color: #fbbf24;
+                font-weight: 700;
+            }
+            .error {
+                color: #fca5a5;
+                margin-top: 8px;
+            }
+            @media (max-width: 720px) {
+                body {
+                    padding: 16px;
+                }
+                .shell {
+                    padding: 20px;
+                }
+                form {
+                    flex-direction: column;
+                }
+                button {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="shell">
+            <header>
+                <div>
+                    <div class="pill">FlowLinkOS Q&A</div>
+                    <div class="title">
+                        Ask in natural language. Get answers with sources.
+                    </div>
+                </div>
+                <div class="muted">Backed by the semantic graph</div>
+            </header>
+
+            <form id="query-form">
+                <input
+                    id="query-input"
+                    type="text"
+                    placeholder="e.g., What did I plan for next week?"
+                    required
+                />
+                <button id="submit-btn" type="submit">Ask</button>
+            </form>
+            <div class="muted">
+                Tip: Try time phrases like "next week", or project requests like
+                "show my design work".
+            </div>
+
+            <div id="result-panel" class="panel" style="display: none">
+                <div class="label-row">
+                    <span id="intent-chip" class="chip intent">intent</span>
+                    <span id="conf-chip" class="chip conf">conf</span>
+                    <span
+                        id="fallback-chip"
+                        class="chip fallback"
+                        style="display: none"
+                        >fallback</span
+                    >
+                </div>
+                <div class="answer" id="answer-text">
+                    Answer will appear here.
+                </div>
+                <div class="timeframe" id="timeframe-text"></div>
+                <div class="sources" id="sources"></div>
+            </div>
+            <div id="error" class="error" style="display: none"></div>
+        </div>
+
+        <script>
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
+
+            const form = document.getElementById("query-form");
+            const input = document.getElementById("query-input");
+            const btn = document.getElementById("submit-btn");
+            const panel = document.getElementById("result-panel");
+            const intentChip = document.getElementById("intent-chip");
+            const confChip = document.getElementById("conf-chip");
+            const fallbackChip = document.getElementById("fallback-chip");
+            const answerText = document.getElementById("answer-text");
+            const timeframeText = document.getElementById("timeframe-text");
+            const sources = document.getElementById("sources");
+            const errorBox = document.getElementById("error");
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                errorBox.style.display = "none";
+                btn.disabled = true;
+                btn.textContent = "Asking...";
+                const query = input.value.trim();
+                if (!query) return;
+
+                try {
+                    const resp = await fetch("/api/queries/execute_query/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": getCookie("csrftoken") || "",
+                        },
+                        body: JSON.stringify({ query_text: query }),
+                        credentials: "include",
+                    });
+
+                    if (!resp.ok) {
+                        throw new Error(`Request failed (${resp.status})`);
+                    }
+                    const data = await resp.json();
+                    renderResult(data);
+                } catch (err) {
+                    errorBox.textContent =
+                        err.message || "Something went wrong.";
+                    errorBox.style.display = "block";
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "Ask";
+                }
+            });
+
+            function renderResult(data) {
+                panel.style.display = "block";
+                intentChip.textContent = data.intent || "unknown";
+                confChip.textContent = `confidence ${Number(data.confidence || 0).toFixed(2)}`;
+                fallbackChip.style.display = data.fallback
+                    ? "inline-flex"
+                    : "none";
+                answerText.textContent = data.answer || "No answer available.";
+
+                if (data.timeframe && data.timeframe.label) {
+                    timeframeText.textContent = `Timeframe: ${data.timeframe.label}`;
+                    timeframeText.style.display = "block";
+                } else {
+                    timeframeText.style.display = "none";
+                }
+
+                sources.innerHTML = "";
+                const results = data.results || [];
+                if (!results.length) {
+                    const empty = document.createElement("div");
+                    empty.className = "muted";
+                    empty.textContent = "No sources found.";
+                    sources.appendChild(empty);
+                    return;
+                }
+
+                results.forEach((r) => {
+                    const card = document.createElement("div");
+                    card.className = "source-card";
+                    const title = document.createElement("div");
+                    title.className = "source-title";
+                    title.textContent =
+                        r.title || r.name || r.summary_text || "Untitled";
+                    const meta = document.createElement("div");
+                    meta.className = "source-meta";
+                    meta.textContent = `${r.type || "item"} • score ${Number(r.score || r.confidence || 0).toFixed(2)}`;
+                    card.appendChild(title);
+                    card.appendChild(meta);
+                    if (r.url) {
+                        const link = document.createElement("a");
+                        link.href = r.url;
+                        link.textContent = "Open";
+                        link.style.color = "#93c5fd";
+                        link.style.fontWeight = "600";
+                        link.style.marginRight = "8px";
+                        link.target = "_blank";
+                        card.appendChild(link);
+                    }
+                    if (r.snippet) {
+                        const snip = document.createElement("div");
+                        snip.className = "muted";
+                        snip.textContent = r.snippet;
+                        card.appendChild(snip);
+                    }
+                    sources.appendChild(card);
+                });
+            }
+        </script>
+    </body>
+</html>

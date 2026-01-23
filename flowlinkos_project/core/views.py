@@ -25,3 +25,8 @@ class UserProfileViewSet(viewsets.ViewSet):
 def home(request):
     """Home page view."""
     return render(request, 'index.html')
+
+
+def query_ui(request):
+    """Natural-language Q&A UI backed by the query router API."""
+    return render(request, 'query_ui.html')
